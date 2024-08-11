@@ -1,0 +1,47 @@
+{
+  "name": "copy-folder",
+  "version": "0.0.1",
+  "description": "copy folder to another folder",
+  "main": "dist/index.js",
+  "engines": {
+    "node": ">=10.12.0"
+  },
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "dev": "rimraf dist && tsc -w",
+    "build": "rimraf dist && tsc -b",
+    "test": "node ./dist/index.js -c=./config.js -v=1",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "./src/**/*": "eslint --fix"
+  },
+  "keywords": [
+    "develop",
+    "rspack",
+    "utils",
+    "copy",
+    "folder"
+  ],
+  "author": "coder_guanxy",
+  "email": "coder_guan@163.com",
+  "license": "MIT",
+  "devDependencies": {
+    "chalk": "^5.3.0",
+    "eslint": "^9.8.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "husky": "^9.1.4",
+    "lint-staged": "^15.2.7",
+    "prettier": "^3.3.3"
+  },
+  "dependencies": {
+    "@rspack/lite-tapable": "1.0.0-alpha.1",
+    "@types/node": "^22.1.0",
+    "@types/semver": "^7.5.8",
+    "colorette": "^2.0.20",
+    "glob": "^11.0.0",
+    "rimraf": "^6.0.1",
+    "semver": "^7.6.3"
+  }
+}

@@ -1,0 +1,14 @@
+.DS_Store
+
+.pnp
+.pnp.js
+.env.local
+.env.*.local
+.history
+
+
+node_modules/
+coverage/
+tests/
+
+src/
