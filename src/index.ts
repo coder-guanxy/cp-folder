@@ -87,6 +87,10 @@ export default (options: CopyFolderOptions) => {
       plugins.unshift(new ReplacementPlugin(options.replacements));
     }
 
+    if (!options.include) {
+      options.include = ['**/*'];
+    }
+
     registerPlugins(plugins);
 
     const onFinish = () => {
@@ -132,9 +136,6 @@ function copyFolder(options: InnnerCopyFolderOptions, wrapFlag?: boolean) {
 
     if (!includeMatched) continue;
 
-    // unmatched file
-    if (regExpTest && !regExpTest.test(filename)) continue;
-
     pluginHook.callAsync(
       { ...options, filename },
       (
@@ -163,7 +164,8 @@ function copyFolder(options: InnnerCopyFolderOptions, wrapFlag?: boolean) {
           if (statSync(srcPath).isDirectory()) {
             copyFolder({ ...result, from: srcPath, to: targetPath });
           } else {
-            const { from, to } = result!;
+            // unmatched file
+            if (regExpTest && !regExpTest.test(filename)) return;
 
             // copy file
             if (!existsSync(targetPath)) {
