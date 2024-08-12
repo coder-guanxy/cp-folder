@@ -59,11 +59,7 @@ cpdirplus({
 });
 ```
 
-### filter
-
-The are three ways to filter.
-
-#### test
+### test
 
 Use a regular approach.
 
@@ -77,7 +73,7 @@ cpdirplus({
 })
 ```
 
-#### include
+### include
 
 Using the globs rule.
 
@@ -91,7 +87,7 @@ cpdirplus({
 })
 ```
 
-#### include
+### include
 
 Using the globs rule.
 
