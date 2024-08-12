@@ -1,55 +1,59 @@
-const path = require("node:path");
-const fs = require("node:fs");
-const { describe, it, expect } = require("@jest/globals")
-const { rimrafSync } = require("rimraf");
-const cpdir = require("../dist").default
+const path = require('node:path');
+const fs = require('node:fs');
+const { describe, it, expect } = require('@jest/globals');
+const { rimrafSync } = require('rimraf');
+const cpdir = require('../dist').default;
 
-describe("cpdir test, include, exclude", () => {
+describe('cpdir test, include, exclude', () => {
+  afterEach(() => {
+    const targetPath = path.join(__dirname, '../build');
+    if (fs.existsSync(targetPath)) {
+      rimrafSync(targetPath);
+    }
+  });
 
-    afterEach(() => {
-        const targetPath = path.join(__dirname, "../build")
-        if (fs.existsSync(targetPath)) {
-            rimrafSync(targetPath)            
-        }
-    })
+  it('should test filter files', async () => {
+    const sourcePath = path.resolve(__dirname, '../dist');
+    const targetPath = path.resolve(__dirname, '../build');
 
-    it("1 => 1", () => {
-        expect(1).toBe(1)
-    })
+    await cpdir({
+      test: /\.js$/,
+      from: sourcePath,
+      to: targetPath,
+    }).then(() => {
+      const result = fs.readdirSync(targetPath);
 
-    // it("should test filter files", async () => {
-    //     const sourcePath = path.resolve(__dirname, "../dist")
-    //     const targetPath = path.resolve(__dirname, "../build")
+      expect(result).not.toContain(['index.js.map']);
+    });
+  });
 
-    //     await cpdir({
-    //         test: /\.js$/,
-    //         from: sourcePath,
-    //         to: targetPath,
-    //     }).then(() => {
+  it('include field', async () => {
+    const sourcePath = path.resolve(__dirname, '../dist');
+    const targetPath = path.resolve(__dirname, '../build');
 
-    //         const result = fs.readdirSync(targetPath);
+    await cpdir({
+      include: ['./**/*.js'],
+      from: sourcePath,
+      to: targetPath,
+    }).then(() => {
+      const result = fs.readdirSync(targetPath);
 
-    //         console.log("reuslt", result)
+      expect(result).not.toContain(['index.js.map']);
+    });
+  });
 
-    //         expect(result).not.toContain(["index.js.map"]);
-    //     })
-    // })
+  it('exclude field', async () => {
+    const sourcePath = path.resolve(__dirname, '../dist');
+    const targetPath = path.resolve(__dirname, '../build');
 
-    // it.concurrent("should include file", async () => {
-    //     const sourcePath = path.resolve(__dirname, "../dist")
-    //     const targetPath = path.resolve(__dirname, "../build")
+    await cpdir({
+      exclude: ['./**/*.js'],
+      from: sourcePath,
+      to: targetPath,
+    }).then(() => {
+      const result = fs.readdirSync(targetPath);
 
-    //     await cpdir({
-    //         include: ["./**/*.js"],
-    //         from: sourcePath,
-    //         to: targetPath,
-    //     }).then(() => {
-
-    //         const result = fs.readdirSync(targetPath);
-
-    //         console.log("reuslt", result)
-
-    //         expect(result).not.toContain(["index.js.map"]);
-    //     })
-    // }, 100000)
-})
+      expect(result).not.toContain(['index.js']);
+    });
+  });
+});
