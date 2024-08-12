@@ -124,13 +124,25 @@ function copyFolder(options: InnnerCopyFolderOptions, wrapFlag?: boolean) {
       path.resolve(RawFrom, matched).startsWith(path.resolve(from, filename)),
     );
 
-    if (excludeMatched) continue;
+    if (excludeMatched) {
+      if (wrapFlag) {
+        count++;
+      }
+
+      continue;
+    }
 
     const includeMatched = includeMatches!.find((matched) =>
       path.resolve(RawFrom, matched).startsWith(path.resolve(from, filename)),
     );
 
-    if (!includeMatched) continue;
+    if (!includeMatched) {
+      if (wrapFlag) {
+        count++;
+      }
+
+      continue;
+    }
 
     pluginHook.callAsync(
       { ...options, filename },
