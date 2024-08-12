@@ -87,10 +87,6 @@ export default (options: CopyFolderOptions) => {
       plugins.unshift(new ReplacementPlugin(options.replacements));
     }
 
-    if (!options.include) {
-      options.include = ['**/*'];
-    }
-
     registerPlugins(plugins);
 
     const onFinish = () => {
