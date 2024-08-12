@@ -160,21 +160,17 @@ function copyFolder(options: InnnerCopyFolderOptions, wrapFlag?: boolean) {
           // rename file
           const _filename = handleRename(renameFiles, filename);
 
-          const srcFile = path.resolve(from, filename);
-          const targetFile = path.resolve(to, result!?.filename);
+          const srcPath = path.resolve(from, filename);
+          const targetPath = path.resolve(to, result!?.filename);
 
-          if (statSync(srcFile).isDirectory()) {
-            copyFolder({ ...result, from: srcFile, to: targetFile });
+          if (statSync(srcPath).isDirectory()) {
+            copyFolder({ ...result, from: srcPath, to: targetPath });
           } else {
             const { from, to } = result!;
 
-            let sourcePath = path.resolve(from, filename);
-
-            const targetPath = path.resolve(to, filename);
-
             // copy file
             if (!existsSync(targetPath)) {
-              copyFileSync(sourcePath, targetFile);
+              copyFileSync(srcPath, targetPath);
             }
 
             if (_filename) {
