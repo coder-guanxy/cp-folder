@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "rimraf dist && tsc -w",
     "build": "rimraf dist && tsc -b",
-    "test": "jest",
+    "test": "npm run build && jest",
     "prepare": "husky"
   },
   "lint-staged": {
