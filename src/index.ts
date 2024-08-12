@@ -41,6 +41,7 @@ interface InnnerCopyFolderOptions extends CopyFolderOptions {
   tempFile?: string;
   excludeMatches?: string[];
   includeMatches?: string[];
+  onFinish?: () => void;
   readonly RawOptions: CopyFolderOptions;
 }
 
@@ -50,57 +51,76 @@ export interface CopyFolderPluginOptions extends InnnerCopyFolderOptions {
   filename: string;
 }
 
-const logger = getLogger('copy-folder');
+const logger = getLogger('cpdir');
 
 const pluginHook = new AsyncSeriesWaterfallHook<CopyFolderPluginOptions>([
   'options',
 ]);
 
+
+
 export default (options: CopyFolderOptions) => {
-  if (typeof options !== 'object') {
-    throw new Error('options must be an object');
-  }
 
-  if (!options.to || typeof options.to !== 'string') {
-    throw new Error('to must be a string');
-  }
+  return new Promise((resolve) => {
+    if (typeof options !== 'object') {
+      throw new Error('options must be an object');
+    }
 
-  if (!options.from || typeof options.from !== 'string') {
-    throw new Error('from must be a string');
-  }
+    if (!options.to || typeof options.to !== 'string') {
+      throw new Error('to must be a string');
+    }
 
-  const { from, plugins = [], exclude = [], include = ['**/*'] } = options;
-  let resultOptions = {
-    ...options,
-    RawOptions: options,
-  } as InnnerCopyFolderOptions;
+    if (!options.from || typeof options.from !== 'string') {
+      throw new Error('from must be a string');
+    }
 
-  let includeMatches = globSync(include, { cwd: from });
-  resultOptions.includeMatches = includeMatches;
+    const { from, plugins = [], exclude = [], include = ['**/*'] } = options;
+    let resultOptions = {
+      ...options,
+      RawOptions: options,
+    } as InnnerCopyFolderOptions;
 
-  let excludeMatches = globSync(exclude, { cwd: from });
-  resultOptions.excludeMatches = excludeMatches;
+    let includeMatches = globSync(include, { cwd: from });
+    resultOptions.includeMatches = includeMatches;
 
-  if (options.replacements) {
-    plugins.unshift(new ReplacementPlugin(options.replacements));
-  }
+    let excludeMatches = globSync(exclude, { cwd: from });
+    resultOptions.excludeMatches = excludeMatches;
 
-  registerPlugins(plugins);
+    if (options.replacements) {
+      plugins.unshift(new ReplacementPlugin(options.replacements));
+    }
 
-  copyFolder(resultOptions);
+    registerPlugins(plugins);
+    
+    const onFinish = () => {
+      logger.success(`\nCopy folders successfully.
+  from: ${from}
+  to: ${options.to}\n`)
+      resolve("done")
+    }
+  
+    resultOptions = { ...resultOptions, onFinish }
+    copyFolder(resultOptions, true);
+  }).catch(err => { 
+    logger.error(err.message)
+    return Promise.reject(err);
+  })
 };
 
-function copyFolder(options: InnnerCopyFolderOptions) {
+function copyFolder(options: InnnerCopyFolderOptions, wrapFlag?: boolean) {
   const {
     from,
     to,
     excludeMatches = [],
     includeMatches,
     RawOptions: { from: RawFrom },
+    onFinish,
     test: regExpTest,
   } = options;
 
   mkdirSync(to, { recursive: true });
+
+  let count = 0;
 
   for (const filename of readdirSync(from)) {
     const excludeMatched = excludeMatches.find(
@@ -127,13 +147,16 @@ function copyFolder(options: InnnerCopyFolderOptions) {
         const { from, to, renameFiles = {} } = result!;
 
         if (err) {
-          logger.error(err);
-          //   throw err;
+          throw err;
         } else {
           if (result === undefined || result === null) {
             return;
           }
-
+          
+          if (wrapFlag) {
+            count++;
+          }
+          
           // rename file
           const _filename = handleRename(renameFiles, filename);
 
@@ -157,6 +180,12 @@ function copyFolder(options: InnnerCopyFolderOptions) {
             if (_filename) {
               const finishPath = path.resolve(to, _filename);
               renameSync(targetPath, finishPath);
+            }
+          }
+
+          if (wrapFlag) {
+            if (readdirSync(from).length === count) {
+              onFinish?.();
             }
           }
         }
