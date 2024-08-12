@@ -1,5 +1,5 @@
 {
-  "name": "copy-folder",
+  "name": "cpdir",
   "version": "0.0.1",
   "description": "copy folder to another folder",
   "main": "dist/index.js",
@@ -10,18 +10,20 @@
   "scripts": {
     "dev": "rimraf dist && tsc -w",
     "build": "rimraf dist && tsc -b",
-    "test": "node ./dist/index.js -c=./config.js -v=1",
     "prepare": "husky"
   },
   "lint-staged": {
     "./src/**/*": "eslint --fix"
   },
   "keywords": [
-    "develop",
-    "rspack",
-    "utils",
+    "cp-folder",
+    "copy-folder",
+    "copy-dir",
+    "cp-dir",
+    "copy-directory",
     "copy",
-    "folder"
+    "folder",
+    "directory"
   ],
   "author": "coder_guanxy",
   "email": "coder_guan@163.com",
