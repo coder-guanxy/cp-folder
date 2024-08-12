@@ -1,16 +1,17 @@
-# cpdir
+# cpdirplus
 
-cpdir mean copy directory, copy folder
+cpdir mean copy directory, copy folder.
+cpdirplus mean richer copy functions.
 
- ## Installation
+## Installation
 
 ```bash
 # npm
-npm install cpdir --save-dev
+npm install cpdirplus --save-dev
 # yarn
-yarn add cpdir --save-dev
+yarn add cpdirplus --save-dev
 # pnpm
-pnpm add cpdir --save-dev
+pnpm add cpdirplus --save-dev
 ```
 
 ## Usage
@@ -20,7 +21,7 @@ pnpm add cpdir --save-dev
 copy ./dist to ./build/productionDist
 
 ```
-cpdir({
+cpdirplus({
     from: path.join(__dirname, "dist"),
     to: path.join(__dirname, "build/productionDist"),
 })
@@ -31,27 +32,34 @@ cpdir({
 rename then file. base path is from field.
 
 ```js
-cpdir({
-    from: path.join(__dirname, "dist"),
-    to: path.join(__dirname, "build/productionDist"),
-    renameFiles: {_gitignore: ".gitignore"},
-})
+cpdirplus({
+  from: path.join(__dirname, 'dist'),
+  to: path.join(__dirname, 'build/productionDist'),
+  renameFiles: { _gitignore: '.gitignore' },
+});
 ```
-
 
 ### replacements
 
- `%PORJECTNAME%` to replace with a `CopyDirectory` string in the `README.md` file.
+`%PORJECTNAME%` to replace with a `CopyDirectory` string in the `README.md` file.
 
 ```js
-cpdir({
-    from: path.join(__dirname, "dist"),
-    to: path.join(__dirname, "build/productionDist"),
-    replacements: [{filename: "README.md", PORJECTNAME: "CopyDirectory"}],
-})
+// dist/README.md
+xxxxx%PORJECTNAME%xxxxx
+    🔽
+// build/productionDist/README.md
+xxxxxCopyDirectoryxxxxx
 ```
 
-### filter 
+```js
+cpdirplus({
+  from: path.join(__dirname, 'dist'),
+  to: path.join(__dirname, 'build/productionDist'),
+  replacements: [{ filename: 'README.md', PORJECTNAME: 'CopyDirectory' }],
+});
+```
+
+### filter
 
 The are three ways to filter.
 
@@ -62,7 +70,7 @@ Use a regular approach.
 All js file under the `from` path.
 
 ```js
-cpdir({
+cpdirplus({
     test: /\.js$/
     from: path.join(__dirname, "dist"),
     to: path.join(__dirname, "build/productionDist"),
@@ -76,7 +84,7 @@ Using the globs rule.
 All ts files in the src directory will be included.
 
 ```js
-cpdir({
+cpdirplus({
     include: ["src/*.ts"]
     from: path.join(__dirname, "dist"),
     to: path.join(__dirname, "build/productionDist"),
@@ -90,22 +98,21 @@ Using the globs rule.
 Exclude all css files under dist.
 
 ```js
-cpdir({
+cpdirplus({
     exclude: ["dist/*.css"]
     from: path.join(__dirname, "dist"),
     to: path.join(__dirname, "build/productionDist"),
 })
 ```
 
-
 ## Options
 
-| name | type | default | description | required | 
-| -- | -- | -- | -- | -- |
-|from| string| - | source path | true |
-|to| string| - | target path | true |
-|test| Regex | - | match file | false |
-|include| Regex | - | match file | false |
-|exclude| Regex | - | match file | false |
-|renameFiles| string[] | - | rename file | false |
-|replacements| ReplacementOption[] | - | replacement field - %Public% | false |
+| name         | type                | default | description            | required |
+| ------------ | ------------------- | ------- | ---------------------- | -------- |
+| from         | string              | -       | source path            | true     |
+| to           | string              | -       | target path            | true     |
+| test         | Regex               | -       | match file             | false    |
+| include      | Regex               | -       | match file             | false    |
+| exclude      | Regex               | -       | match file             | false    |
+| renameFiles  | string[]            | -       | rename file            | false    |
+| replacements | ReplacementOption[] | -       | magic field - %Public% | false    |
