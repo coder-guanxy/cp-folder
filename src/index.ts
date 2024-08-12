@@ -119,7 +119,17 @@ function copyFolder(options: InnnerCopyFolderOptions, wrapFlag?: boolean) {
 
   let count = 0;
 
-  for (const filename of readdirSync(from)) {
+  const fromDir = readdirSync(from);
+
+  const onDone = (count: number) => {
+    if (wrapFlag) {
+      if (fromDir.length === count) {
+        onFinish?.();
+      }
+    }
+  };
+
+  for (const filename of fromDir) {
     const excludeMatched = excludeMatches.find((matched) =>
       path.resolve(RawFrom, matched).startsWith(path.resolve(from, filename)),
     );
@@ -127,6 +137,8 @@ function copyFolder(options: InnnerCopyFolderOptions, wrapFlag?: boolean) {
     if (excludeMatched) {
       if (wrapFlag) {
         count++;
+
+        onDone(count);
       }
 
       continue;
@@ -141,6 +153,7 @@ function copyFolder(options: InnnerCopyFolderOptions, wrapFlag?: boolean) {
         count++;
       }
 
+      onDone(count);
       continue;
     }
 
@@ -173,7 +186,7 @@ function copyFolder(options: InnnerCopyFolderOptions, wrapFlag?: boolean) {
             copyFolder({ ...result, from: srcPath, to: targetPath });
           } else {
             // unmatched file
-            if (regExpTest && !regExpTest.test(filename)) return;
+            if (regExpTest && !regExpTest.test(filename)) return onDone(count);
 
             // copy file
             if (!existsSync(targetPath)) {
@@ -187,9 +200,7 @@ function copyFolder(options: InnnerCopyFolderOptions, wrapFlag?: boolean) {
           }
 
           if (wrapFlag) {
-            if (readdirSync(from).length === count) {
-              onFinish?.();
-            }
+            onDone(count);
           }
         }
       },
