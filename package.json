@@ -24,7 +24,9 @@
     "copy-directory",
     "copy",
     "folder",
-    "directory"
+    "directory",
+    "cpdir",
+    "cpdirplus"
   ],
   "author": "coder_guanxy",
   "email": "coder_guan@163.com",
