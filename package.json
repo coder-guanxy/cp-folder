@@ -1,5 +1,5 @@
 {
-  "name": "cpdir",
+  "name": "cpdirplus",
   "version": "0.0.1",
   "description": "copy folder to another folder",
   "main": "dist/index.js",
@@ -29,6 +29,13 @@
   "author": "coder_guanxy",
   "email": "coder_guan@163.com",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/coder_guanxy/cpdirplus.git"
+  },
+  "bugs": {
+    "url": "https://github.com/coder_guanxy/cpdirplus/issues"
+  },
   "devDependencies": {
     "@jest/globals": "^29.7.0",
     "chalk": "^5.3.0",
