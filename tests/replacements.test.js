@@ -15,7 +15,7 @@ describe("cpdir replacements", () => {
 
     it("should replacements %PORJECTNAME% replace __project_name__", async () => {
         const sourcePath = path.resolve(__dirname, "../dist")
-        const targetPath = path.resolve(__dirname, "../build1")
+        const targetPath = path.resolve(__dirname, "../build")
 
         const readmePath = path.join(sourcePath, "README.md");
         const content = "%PORJECTNAME%"
@@ -28,10 +28,11 @@ describe("cpdir replacements", () => {
         }).then(() => {
             const readmeTargetPath = path.join(targetPath, "README.md");
 
-
             const result = fs.readFileSync(readmeTargetPath, {encoding: "utf8"});
 
             expect(result).toContain('__project_name__');
+
+            rimrafSync(readmeTargetPath);
         })
     })
 })
