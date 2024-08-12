@@ -57,10 +57,7 @@ const pluginHook = new AsyncSeriesWaterfallHook<CopyFolderPluginOptions>([
   'options',
 ]);
 
-
-
 export default (options: CopyFolderOptions) => {
-
   return new Promise((resolve) => {
     if (typeof options !== 'object') {
       throw new Error('options must be an object');
@@ -91,20 +88,20 @@ export default (options: CopyFolderOptions) => {
     }
 
     registerPlugins(plugins);
-    
+
     const onFinish = () => {
       logger.success(`\nCopy folders successfully.
   from: ${from}
-  to: ${options.to}\n`)
-      resolve("done")
-    }
-  
-    resultOptions = { ...resultOptions, onFinish }
+  to: ${options.to}\n`);
+      resolve('done');
+    };
+
+    resultOptions = { ...resultOptions, onFinish };
     copyFolder(resultOptions, true);
-  }).catch(err => { 
-    logger.error(err.message)
+  }).catch((err) => {
+    logger.error(err.message);
     return Promise.reject(err);
-  })
+  });
 };
 
 function copyFolder(options: InnnerCopyFolderOptions, wrapFlag?: boolean) {
@@ -123,14 +120,14 @@ function copyFolder(options: InnnerCopyFolderOptions, wrapFlag?: boolean) {
   let count = 0;
 
   for (const filename of readdirSync(from)) {
-    const excludeMatched = excludeMatches.find(
-      (matched) => path.join(RawFrom, matched) === path.join(from, filename),
+    const excludeMatched = excludeMatches.find((matched) =>
+      path.resolve(RawFrom, matched).startsWith(path.resolve(from, filename)),
     );
 
     if (excludeMatched) continue;
 
-    const includeMatched = includeMatches!.find(
-      (matched) => path.join(RawFrom, matched) === path.join(from, filename),
+    const includeMatched = includeMatches!.find((matched) =>
+      path.resolve(RawFrom, matched).startsWith(path.resolve(from, filename)),
     );
 
     if (!includeMatched) continue;
@@ -152,11 +149,11 @@ function copyFolder(options: InnnerCopyFolderOptions, wrapFlag?: boolean) {
           if (result === undefined || result === null) {
             return;
           }
-          
+
           if (wrapFlag) {
             count++;
           }
-          
+
           // rename file
           const _filename = handleRename(renameFiles, filename);
 
