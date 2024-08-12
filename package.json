@@ -1,6 +1,6 @@
 {
   "name": "cpdirplus",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "copy folder to another folder",
   "main": "dist/index.js",
   "engines": {
@@ -33,10 +33,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/coder_guanxy/cpdirplus.git"
+    "url": "https://github.com/coder-guanxy/cpdirplus.git"
   },
   "bugs": {
-    "url": "https://github.com/coder_guanxy/cpdirplus/issues"
+    "url": "https://github.com/coder-guanxy/cpdirplus/issues"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",
