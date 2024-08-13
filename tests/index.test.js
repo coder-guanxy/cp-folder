@@ -53,4 +53,17 @@ describe('cpdir basic copy', () => {
       expect(e.message).toContain('no such file or directory');
     }
   });
+
+  it('basic from is file path', () => {
+    const sourcePath = path.resolve(__dirname, '../dist/index.js');
+    const targetPath = path.resolve(__dirname, '../build1');
+    cpdir({
+      from: sourcePath,
+      to: targetPath,
+    }).then(() => {
+      const files = fs.readdirSync(targetPath);
+      expect(files.length).toBe(1);
+      expect(files).toMatchObject(['index.js']);
+    });
+  });
 });
