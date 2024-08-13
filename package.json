@@ -11,6 +11,7 @@
     "dev": "rimraf dist && tsc -w",
     "build": "rimraf dist && tsc -b",
     "test": "npm run build && jest",
+    "publish": "npm version patch && git push --follow-tags && npm publish",
     "prepare": "husky"
   },
   "lint-staged": {
