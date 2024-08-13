@@ -71,21 +71,20 @@ export default (options: CopyFolderOptions) => {
       throw new Error('from must be a string');
     }
 
-    const { from, plugins = [], exclude = [] } = options;
+    let { from, plugins = [], exclude = [], include = ['**/*'] } = options;
     let resultOptions = {
       ...options,
-      include: options.include ?? ['**/*'], // default include all files
       RawOptions: options,
     } as InnnerCopyFolderOptions;
 
     if (statSync(from).isFile()) {
       const fromPathParse = path.parse(from);
 
-      resultOptions.from = fromPathParse.dir;
-      resultOptions.include = [fromPathParse.base];
+      from = resultOptions.from = fromPathParse.dir;
+      include = resultOptions.include = [fromPathParse.base];
     }
 
-    let includeMatches = globSync(resultOptions.include!, { cwd: from });
+    let includeMatches = globSync(include, { cwd: from });
     resultOptions.includeMatches = includeMatches;
 
     let excludeMatches = globSync(exclude, { cwd: from });
