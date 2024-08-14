@@ -66,4 +66,17 @@ describe('cpdir basic copy', () => {
       expect(files).toMatchObject(['index.js']);
     });
   });
+
+  it('basic relative path', () => {
+    const sourcePath = './dist/index.js'; //path.resolve(__dirname, '../dist/index.js');
+    const targetPath = './build'; //path.resolve(__dirname, '../build1');
+    cpdir({
+      from: sourcePath,
+      to: targetPath,
+    }).then(() => {
+      const files = fs.readdirSync(targetPath);
+      expect(files.length).toBe(1);
+      expect(files).toMatchObject(['index.js']);
+    });
+  });
 });
