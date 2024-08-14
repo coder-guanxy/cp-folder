@@ -7,55 +7,28 @@ import {
   existsSync,
   renameSync,
 } from 'node:fs';
-import { getLogger } from './utils/logger';
 import { globSync } from 'glob';
 import path from 'node:path';
-import ReplacementPlugin, {
-  ReplacementOption,
-} from './build-in-plugins/replacement-plugin';
+import { rimrafSync } from 'rimraf';
+import { handleRename } from './rename';
+import { getLogger } from './utils/logger';
+import { registerPlugins, pluginHook } from './plugin';
+import ReplacementPlugin from './build-in-plugins/replacement-plugin';
+import type {
+  CopyFolderPluginOptions,
+  CopyFolderOptions,
+  InnnerCopyFolderOptions,
+} from './types';
+
+export * from './types';
+
+export type CopyFolderHook = typeof pluginHook;
 
 /**
  * @description copy folder content to other folder
  */
 
-export interface CopyFolderPlugin {
-  onBeforeCopy: (
-    hook: AsyncSeriesWaterfallHook<CopyFolderPluginOptions>,
-  ) => void;
-}
-
-type CopyFolderOptionRename = Record<string, string>;
-
-export interface CopyFolderOptions {
-  test?: RegExp; // filter file
-  include?: string[] | string; // filter dir
-  exclude?: string[] | string; // filter dir
-  from: string;
-  to: string;
-  renameFiles?: CopyFolderOptionRename;
-  replacements?: ReplacementOption[];
-  plugins?: CopyFolderPlugin[];
-}
-
-interface InnnerCopyFolderOptions extends CopyFolderOptions {
-  tempFile?: string;
-  excludeMatches?: string[];
-  includeMatches?: string[];
-  onFinish?: () => void;
-  readonly RawOptions: CopyFolderOptions;
-}
-
-export type CopyFolderHook = typeof pluginHook;
-
-export interface CopyFolderPluginOptions extends InnnerCopyFolderOptions {
-  filename: string;
-}
-
-const logger = getLogger('cpdir');
-
-const pluginHook = new AsyncSeriesWaterfallHook<CopyFolderPluginOptions>([
-  'options',
-]);
+const logger = getLogger('cpdirplus');
 
 export default (options: CopyFolderOptions) => {
   return new Promise((resolve) => {
@@ -105,10 +78,21 @@ export default (options: CopyFolderOptions) => {
 
     resultOptions = { ...resultOptions, onFinish };
     copyFolder(resultOptions, true);
-  }).catch((err) => {
-    logger.error(err.message);
-    return Promise.reject(err);
-  });
+  })
+    .then((...args) => {
+      // move
+      if (options.move) {
+        if (existsSync(options.from)) {
+          rimrafSync(options.from);
+        }
+      }
+
+      return Promise.resolve(...args);
+    })
+    .catch((err) => {
+      logger.error(err.message);
+      return Promise.reject(err);
+    });
 };
 
 function copyFolder(options: InnnerCopyFolderOptions, wrapFlag?: boolean) {
@@ -214,25 +198,3 @@ function copyFolder(options: InnnerCopyFolderOptions, wrapFlag?: boolean) {
     );
   }
 }
-
-function registerPlugins(plugins: CopyFolderPlugin[]) {
-  plugins.forEach((plugin) => {
-    plugin.onBeforeCopy(pluginHook);
-  });
-}
-
-const handleRename = (
-  renameFiles: CopyFolderOptionRename,
-  fileName: string,
-) => {
-  let result = fileName;
-
-  Object.entries(renameFiles)?.find(([sourceName, targetName]) => {
-    if (sourceName === fileName) {
-      result = targetName;
-      return true;
-    }
-  });
-
-  return result;
-};
