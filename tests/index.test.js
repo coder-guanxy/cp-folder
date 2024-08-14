@@ -56,7 +56,7 @@ describe('cpdir basic copy', () => {
 
   it('basic from is file path', () => {
     const sourcePath = path.resolve(__dirname, '../dist/index.js');
-    const targetPath = path.resolve(__dirname, '../build1');
+    const targetPath = path.resolve(__dirname, '../build');
     cpdir({
       from: sourcePath,
       to: targetPath,
