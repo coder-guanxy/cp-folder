@@ -87,7 +87,7 @@ cpdirplus({
 })
 ```
 
-### include
+### exclude
 
 Using the globs rule.
 
@@ -101,6 +101,20 @@ cpdirplus({
 })
 ```
 
+### move
+
+Whether to delete the source.
+
+just move the source.
+
+```js
+cpdirplus({
+  move: true, // default false
+  from: path.join(__dirname, 'dist'),
+  to: path.join(__dirname, 'build/productionDist'),
+});
+```
+
 ## Options
 
 | name         | type                | default | description            | required |
@@ -111,4 +125,5 @@ cpdirplus({
 | include      | Regex               | -       | match file             | false    |
 | exclude      | Regex               | -       | match file             | false    |
 | renameFiles  | string[]            | -       | rename file            | false    |
+| move         | boolean             | false   | remove source          | false    |
 | replacements | ReplacementOption[] | -       | magic field - %Public% | false    |
