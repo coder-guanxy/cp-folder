@@ -30,7 +30,24 @@ export type CopyFolderHook = typeof pluginHook;
 
 const logger = getLogger('cpdirplus');
 
-export default (options: CopyFolderOptions) => {
+export default (from: string | CopyFolderOptions, to?: string) => {
+  if (typeof from === 'string' && typeof to === 'string') {
+    return cpdirplusImpl({
+      from,
+      to,
+    });
+  }
+
+  if (typeof from === 'string' && !to) {
+    return Promise.reject('The second parameter mean target path, be required');
+  }
+
+  if (typeof from === 'object' && !to) {
+    return cpdirplusImpl(from);
+  }
+};
+
+const cpdirplusImpl = (options: CopyFolderOptions) => {
   return new Promise((resolve) => {
     if (typeof options !== 'object') {
       throw new Error('options must be an object');
