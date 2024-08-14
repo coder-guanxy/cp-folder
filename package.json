@@ -1,6 +1,6 @@
 {
   "name": "cpdirplus",
-  "version": "0.0.6",
+  "version": "0.0.4",
   "description": "copy folder to another folder",
   "main": "dist/index.js",
   "engines": {
