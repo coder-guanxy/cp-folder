@@ -1,6 +1,6 @@
 {
   "name": "cpdirplus",
-  "version": "0.0.5",
+  "version": "0.0.4",
   "description": "copy folder to another folder",
   "main": "dist/index.js",
   "engines": {
@@ -11,7 +11,7 @@
     "dev": "rimraf dist && tsc -w",
     "build": "rimraf dist && tsc -b",
     "test": "npm run build && jest",
-    "publish": "npm version patch && git push --follow-tags && npm publish",
+    "p": "npm version patch && git push --follow-tags && npm publish",
     "prepare": "husky"
   },
   "lint-staged": {
