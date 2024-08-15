@@ -1,4 +1,3 @@
-import { AsyncSeriesWaterfallHook } from '@rspack/lite-tapable';
 import {
   mkdirSync,
   readdirSync,
@@ -30,11 +29,32 @@ export type CopyFolderHook = typeof pluginHook;
 
 const logger = getLogger('cpdirplus');
 
-export default (from: string | CopyFolderOptions, to?: string) => {
+export function cpdirplus(
+  from: string,
+  to: string,
+  options?: Omit<CopyFolderOptions, 'from' | 'to'>,
+): Promise<void>;
+
+export function cpdirplus(options: CopyFolderOptions): Promise<void>;
+
+export default function cpdirplus(
+  from: string | CopyFolderOptions,
+  to?: string,
+  options?: Omit<CopyFolderOptions, 'from' | 'to'>,
+) {
   if (typeof from === 'string' && typeof to === 'string') {
+    if (typeof options !== 'object') {
+      options = {};
+    }
+
+    if (options === null) {
+      options = {};
+    }
+
     return cpdirplusImpl({
       from,
       to,
+      ...options,
     });
   }
 
@@ -45,7 +65,7 @@ export default (from: string | CopyFolderOptions, to?: string) => {
   if (typeof from === 'object' && !to) {
     return cpdirplusImpl(from);
   }
-};
+}
 
 const cpdirplusImpl = (options: CopyFolderOptions) => {
   return new Promise((resolve) => {

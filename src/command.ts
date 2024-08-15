@@ -48,10 +48,10 @@ export class CPDirPlusCli {
       .fail(() => {})
       .parse() as unknown as YargsResultOptions;
 
-    await this.parseCommand(result);
+    await this.execCommand(result);
   }
 
-  private async parseCommand(option: YargsResultOptions) {
+  private async execCommand(option: YargsResultOptions) {
     if (!option.to) {
       option.t = option.to = option['_'][1];
     }
@@ -60,6 +60,8 @@ export class CPDirPlusCli {
       option.f = option.from = option['_'][0];
     }
 
-    await cpdirplus(option);
+    try {
+      await cpdirplus(option);
+    } catch (e) {}
   }
 }
