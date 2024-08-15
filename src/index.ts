@@ -59,7 +59,9 @@ export default function cpdirplus(
   }
 
   if (typeof from === 'string' && !to) {
-    return Promise.reject('The second parameter mean target path, be required');
+    return Promise.reject(
+      new Error('The second parameter mean target path, be required'),
+    );
   }
 
   if (typeof from === 'object' && !to) {
@@ -108,8 +110,8 @@ const cpdirplusImpl = (options: CopyFolderOptions) => {
 
     const onFinish = () => {
       logger.success(`\nCopy folders successfully.
-  from: ${from}
-  to: ${options.to}\n`);
+  from: ./${path.relative(process.cwd(), from)}
+  to: ./${path.relative(process.cwd(), options.to)}\n`);
       resolve('done');
     };
 
