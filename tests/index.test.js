@@ -79,4 +79,33 @@ describe('cpdir basic copy', () => {
       expect(files).toMatchObject(['index.js']);
     });
   });
+
+  it('basic one params', () => {
+    const sourcePath = './dist/index.js'; //path.resolve(__dirname, '../dist/index.js');
+    cpdir(sourcePath).catch((e) => {
+      expect(e.message).toBe(
+        'The second parameter mean target path, be required',
+      );
+    });
+  });
+
+  it('basic two params', () => {
+    const sourcePath = './dist/index.js'; //path.resolve(__dirname, '../dist/index.js');
+    const targetPath = './build'; //path.resolve(__dirname, '../build1');
+    cpdir(sourcePath, targetPath).then(() => {
+      const files = fs.readdirSync(targetPath);
+      expect(files.length).toBe(1);
+      expect(files).toMatchObject(['index.js']);
+    });
+  });
+
+  it('basic three params', () => {
+    const sourcePath = './dist'; //path.resolve(__dirname, '../dist/index.js');
+    const targetPath = './build'; //path.resolve(__dirname, '../build1');
+    cpdir(sourcePath, targetPath, { include: 'index.js' }).then(() => {
+      const files = fs.readdirSync(targetPath);
+      expect(files.length).toBe(1);
+      expect(files).toMatchObject(['index.js']);
+    });
+  });
 });
