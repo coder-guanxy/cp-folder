@@ -11,12 +11,6 @@ importers:
       '@rspack/lite-tapable':
         specifier: 1.0.0-alpha.1
         version: 1.0.0-alpha.1
-      '@types/node':
-        specifier: ^22.1.0
-        version: 22.2.0
-      '@types/semver':
-        specifier: ^7.5.8
-        version: 7.5.8
       colorette:
         specifier: ^2.0.20
         version: 2.0.20
@@ -26,9 +20,6 @@ importers:
       rimraf:
         specifier: ^6.0.1
         version: 6.0.1
-      semver:
-        specifier: ^7.6.3
-        version: 7.6.3
       yargs:
         specifier: ^17.7.2
         version: 17.7.2
@@ -36,12 +27,12 @@ importers:
       '@jest/globals':
         specifier: ^29.7.0
         version: 29.7.0
+      '@types/node':
+        specifier: ^22.2.0
+        version: 22.2.0
       '@types/yargs':
         specifier: ^17.0.33
         version: 17.0.33
-      chalk:
-        specifier: ^5.3.0
-        version: 5.3.0
       eslint:
         specifier: ^9.8.0
         version: 9.9.0
@@ -410,9 +401,6 @@ packages:
 
   '@types/node@22.2.0':
     resolution: {integrity: sha512-bm6EG6/pCpkxDf/0gDNDdtDILMOHgaQBVOJGdwsqClnxA3xL6jtMv76rLBc006RVMWbmaf0xbmom4Z/5o2nRkQ==}
-
-  '@types/semver@7.5.8':
-    resolution: {integrity: sha512-I8EUhyrgfLrcTkzV3TSsGyl1tSuPrEDzr0yd5m90UgNxQkyDXULk3b6MlQqTCpZpNtWe1K0hzclnZkTcLBe2UQ==}
 
   '@types/stack-utils@2.0.3':
     resolution: {integrity: sha512-9aEbYZ3TbYMznPdcdr3SmIrLXwC/AKZXQeCf9Pgao5CKb8CyHuEX5jzWPTkvregvhRJHcpRO6BFoGW9ycaOkYw==}
@@ -2175,8 +2163,6 @@ snapshots:
   '@types/node@22.2.0':
     dependencies:
       undici-types: 6.13.0
-
-  '@types/semver@7.5.8': {}
 
   '@types/stack-utils@2.0.3': {}
 
