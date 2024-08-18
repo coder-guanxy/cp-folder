@@ -7,6 +7,8 @@ import { registerPlugins, pluginHook } from './plugin';
 import ReplacementPlugin from './build-in-plugins/replacement-plugin';
 import type { CopyFolderOptions, InnnerCopyFolderOptions } from './types';
 import copyFolder from './copy-folder';
+import { isArray, isObject, isString } from './utils/check-type';
+import CustomError from './custom-error';
 
 export * from './types';
 
@@ -31,45 +33,54 @@ export default function cpdirplus(
   to?: string,
   options?: Omit<CopyFolderOptions, 'from' | 'to'>,
 ) {
-  if (typeof from === 'string' && typeof to === 'string') {
-    if (typeof options !== 'object') {
-      options = {};
+  let resultOptions = {} as CopyFolderOptions;
+  // 1. from is options
+  const fromIsOptions = isObject(from) && !isArray(from) && !to;
+
+  if (fromIsOptions) {
+    resultOptions = from as CopyFolderOptions;
+  }
+
+  // 2. from is string or sting[], to is string, options is object
+  //  - from is pattern
+  //  - from is path
+  //  - from is file
+  const toIsPath = (isString(from) || isArray(from)) && isString(to);
+
+  if (toIsPath) {
+    const isPattern = isArray(from) || !existsSync(from);
+
+    if (isPattern) {
+      resultOptions = {
+        to,
+        from: process.cwd(),
+        include: from as string | string[],
+        ...options,
+      };
+    } else {
+      resultOptions = {
+        from,
+        to,
+        ...options,
+      };
     }
-
-    if (options === null) {
-      options = {};
-    }
-
-    return cpdirplusImpl({
-      from,
-      to,
-      ...options,
-    });
   }
 
-  if (typeof from === 'string' && !to) {
-    return Promise.reject(
-      new Error('The second parameter mean target path, be required'),
-    );
-  }
-
-  if (typeof from === 'object' && !to) {
-    return cpdirplusImpl(from);
-  }
+  return cpdirplusImpl(resultOptions);
 }
 
 const cpdirplusImpl = (options: CopyFolderOptions) => {
   return new Promise((resolve) => {
     if (typeof options !== 'object') {
-      throw new Error('options must be an object');
+      throw new CustomError('options must be an object');
     }
 
     if (!options.to || typeof options.to !== 'string') {
-      throw new Error('to [target path] must be a string');
+      throw new CustomError('to [target path] must be a string');
     }
 
     if (!options.from || typeof options.from !== 'string') {
-      throw new Error('from [source path] must be a string');
+      throw new CustomError('from [source path] must be a string');
     }
 
     let { from, plugins = [], exclude = [], include = ['**/*'] } = options;

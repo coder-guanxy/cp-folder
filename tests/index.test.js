@@ -39,7 +39,7 @@ describe('cpdir basic copy', () => {
         to: path.resolve(__dirname, '../build'),
       });
     } catch (e) {
-      expect(e.message).toBe('from must be a string');
+      expect(e.message).toBe('from [source path] must be a string');
     }
   });
 
@@ -83,9 +83,7 @@ describe('cpdir basic copy', () => {
   it('basic one params', () => {
     const sourcePath = './dist/index.js'; //path.resolve(__dirname, '../dist/index.js');
     cpdir(sourcePath).catch((e) => {
-      expect(e.message).toBe(
-        'The second parameter mean target path, be required',
-      );
+      expect(e.message).toBe('to [target path] must be a string');
     });
   });
 

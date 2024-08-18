@@ -1,9 +1,9 @@
+/* istanbul ignore file */
 const path = require('node:path');
 const fs = require('node:fs');
 const { execSync } = require('node:child_process');
 const { describe, it, expect, afterEach } = require('@jest/globals');
 const { rimrafSync } = require('rimraf');
-
 describe('cpdir move', () => {
   afterEach(() => {
     const targetPath = path.join(__dirname, '../build');
@@ -64,7 +64,7 @@ describe('cpdir move', () => {
     try {
       execSync(`cpdirplus ${sourcePath} -s ${targetPath}`);
     } catch (err) {
-      expect(err.message).toContain('to must be a string');
+      expect(err.message).toContain('to [target path] must be a string');
     }
   });
 });

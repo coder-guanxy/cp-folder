@@ -14,6 +14,7 @@
     "dev": "rimraf dist && tsc -w",
     "build": "rimraf dist && tsc -b",
     "test": "npm run build && jest",
+    "coverage": "npm run test -- --coverage",
     "publish:patch": "npm version patch && git push --follow-tags && npm publish",
     "publish:minor": "npm version minor && git push --follow-tags && npm publish",
     "publish:major": "npm version major && git push --follow-tags && npm publish",
