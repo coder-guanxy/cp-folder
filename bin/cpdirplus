@@ -1,0 +1,4 @@
+#!/usr/bin/env node
+
+const { CPDirPlusCLI } = require('../dist/command');
+new CPDirPlusCLI(process.argv).run();

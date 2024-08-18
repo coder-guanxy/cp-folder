@@ -12,7 +12,7 @@ interface YargsResultOptions {
   $0: string;
 }
 
-export class CPDirPlusCli {
+export class CPDirPlusCLI {
   name = 'cpdirplus';
   constructor(private argv: string[]) {}
   async run() {
