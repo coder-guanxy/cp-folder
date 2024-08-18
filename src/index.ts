@@ -1,23 +1,12 @@
-import {
-  mkdirSync,
-  readdirSync,
-  statSync,
-  copyFileSync,
-  existsSync,
-  renameSync,
-} from 'node:fs';
+import { statSync, existsSync } from 'node:fs';
 import { globSync } from 'glob';
 import path from 'node:path';
 import { rimrafSync } from 'rimraf';
-import { handleRename } from './rename';
 import { getLogger } from './utils/logger';
 import { registerPlugins, pluginHook } from './plugin';
 import ReplacementPlugin from './build-in-plugins/replacement-plugin';
-import type {
-  CopyFolderPluginOptions,
-  CopyFolderOptions,
-  InnnerCopyFolderOptions,
-} from './types';
+import type { CopyFolderOptions, InnnerCopyFolderOptions } from './types';
+import copyFolder from './copy-folder';
 
 export * from './types';
 
@@ -76,11 +65,11 @@ const cpdirplusImpl = (options: CopyFolderOptions) => {
     }
 
     if (!options.to || typeof options.to !== 'string') {
-      throw new Error('to must be a string');
+      throw new Error('to [target path] must be a string');
     }
 
     if (!options.from || typeof options.from !== 'string') {
-      throw new Error('from must be a string');
+      throw new Error('from [source path] must be a string');
     }
 
     let { from, plugins = [], exclude = [], include = ['**/*'] } = options;
@@ -109,15 +98,19 @@ const cpdirplusImpl = (options: CopyFolderOptions) => {
     registerPlugins(plugins);
 
     const onFinish = () => {
-      logger.success(`\nCopy folders successfully.
-  from: ./${path.relative(process.cwd(), from)}
-  to: ./${path.relative(process.cwd(), options.to)}\n`);
+      // logger.success(` Copy folders successfully.`);
+      // from: ./${path.relative(process.cwd(), from)}
+      // to: ./${path.relative(process.cwd(), options.to)}\n`);
       resolve('done');
     };
 
     resultOptions = { ...resultOptions, onFinish };
     copyFolder(resultOptions, true);
   })
+    .then((...args) => {
+      logger.success(` Copy folders successfully.`);
+      return Promise.resolve(...args);
+    })
     .then((...args) => {
       // move
       if (options.move) {
@@ -133,107 +126,3 @@ const cpdirplusImpl = (options: CopyFolderOptions) => {
       return Promise.reject(err);
     });
 };
-
-function copyFolder(options: InnnerCopyFolderOptions, wrapFlag?: boolean) {
-  const {
-    from,
-    to,
-    excludeMatches = [],
-    includeMatches,
-    RawOptions: { from: RawFrom },
-    onFinish,
-    test: regExpTest,
-  } = options;
-
-  mkdirSync(to, { recursive: true });
-
-  let count = 0;
-
-  const fromDir = readdirSync(from);
-
-  const onDone = (count: number) => {
-    if (wrapFlag) {
-      if (fromDir.length === count) {
-        onFinish?.();
-      }
-    }
-  };
-
-  for (const filename of fromDir) {
-    const excludeMatched = excludeMatches.find((matched) =>
-      path.resolve(RawFrom, matched).startsWith(path.resolve(from, filename)),
-    );
-
-    if (excludeMatched) {
-      if (wrapFlag) {
-        count++;
-
-        onDone(count);
-      }
-
-      continue;
-    }
-
-    const includeMatched = includeMatches!.find((matched) =>
-      path.resolve(RawFrom, matched).startsWith(path.resolve(from, filename)),
-    );
-
-    if (!includeMatched) {
-      if (wrapFlag) {
-        count++;
-      }
-
-      onDone(count);
-      continue;
-    }
-
-    pluginHook.callAsync(
-      { ...options, filename },
-      (
-        err: Error | null,
-        result: CopyFolderPluginOptions | null | undefined,
-      ) => {
-        const { from, to, renameFiles = {} } = result!;
-
-        if (err) {
-          throw err;
-        } else {
-          if (result === undefined || result === null) {
-            return;
-          }
-
-          if (wrapFlag) {
-            count++;
-          }
-
-          // rename file
-          const _filename = handleRename(renameFiles, filename);
-
-          const srcPath = path.resolve(from, filename);
-          const targetPath = path.resolve(to, result!?.filename);
-
-          if (statSync(srcPath).isDirectory()) {
-            copyFolder({ ...result, from: srcPath, to: targetPath });
-          } else {
-            // unmatched file
-            if (regExpTest && !regExpTest.test(filename)) return onDone(count);
-
-            // copy file
-            if (!existsSync(targetPath)) {
-              copyFileSync(srcPath, targetPath);
-            }
-
-            if (_filename) {
-              const finishPath = path.resolve(to, _filename);
-              renameSync(targetPath, finishPath);
-            }
-          }
-
-          if (wrapFlag) {
-            onDone(count);
-          }
-        }
-      },
-    );
-  }
-}
