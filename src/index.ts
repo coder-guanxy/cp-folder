@@ -49,11 +49,13 @@ export default function cpdirplus(
 
   if (toIsPath) {
     const isPattern = isArray(from) || !existsSync(from);
-
     if (isPattern) {
+      if (options?.base) {
+      }
+
       resultOptions = {
         to,
-        from: process.cwd(),
+        from: options?.base ?? process.cwd(),
         include: from as string | string[],
         ...options,
       };

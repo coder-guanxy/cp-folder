@@ -9,6 +9,9 @@ interface YargsResultOptions {
   to: string;
   from: string;
   move?: boolean;
+  m?: boolean;
+  b?: string;
+  base?: string;
   $0: string;
 }
 
@@ -38,6 +41,12 @@ export class CPDirPlusCLI {
         type: 'string',
         demandOption: true,
       })
+      .option('base', {
+        alias: 'b',
+        describe: 'base folder',
+        type: 'string',
+        demandOption: false,
+      })
       .version()
       .alias({
         h: 'help',
@@ -60,8 +69,10 @@ export class CPDirPlusCLI {
       option.f = option.from = option['_'][0];
     }
 
+    const { from, to, ...restOptions } = option;
+
     try {
-      await cpdirplus(option);
+      await cpdirplus(from, to, restOptions);
     } catch (e) {}
   }
 }

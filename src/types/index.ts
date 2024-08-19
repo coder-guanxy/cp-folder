@@ -18,6 +18,7 @@ export interface CopyFolderOptions {
   renameFiles?: CopyFolderOptionRename;
   replacements?: ReplacementOption[];
   move?: boolean;
+  base?: string;
   plugins?: CopyFolderPlugin[];
 }
 

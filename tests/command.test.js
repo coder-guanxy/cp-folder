@@ -55,6 +55,12 @@ describe('cpdir move', () => {
     const [sourceResult3, targetResult3] = readResultDir();
 
     expect(sourceResult3).toEqual(targetResult3);
+
+    execSync(`cpdirplus  "**/*js"  ${targetPath} -b dist`);
+
+    const [sourceResult4, targetResult4] = readResultDir();
+
+    expect(sourceResult4).toEqual(targetResult4);
   });
 
   it('should exec be error when option is invalid', () => {
