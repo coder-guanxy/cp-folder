@@ -1,6 +1,5 @@
 # cpdirplus
 
-cpdir mean copy directory, copy folder.
 cpdirplus mean richer copy functions.
 
 ## Installation
@@ -25,6 +24,34 @@ cpdirplus({
     from: path.join(__dirname, "dist"),
     to: path.join(__dirname, "build/productionDist"),
 })
+```
+
+### command line
+
+just copy
+
+```bash
+cpdirplus ./dist ./build/productionDist
+```
+
+```bash
+cpdirplus -f ./dist -t ./build/productionDist
+```
+
+```bash
+cpdirplus --from ./dist --to ./build/productionDist
+```
+
+remove - delete source after copy.
+
+```bash
+cpdirplus ./dist ./build/productionDist -m
+```
+
+base
+
+```bash
+cpdirplus "**/*js" ./build/productionDist -b dist
 ```
 
 ### renameFiles
