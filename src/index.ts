@@ -3,12 +3,16 @@ import { globSync } from 'glob';
 import path from 'node:path';
 import { rimrafSync } from 'rimraf';
 import { getLogger } from './utils/logger';
-import { registerPlugins, pluginHook } from './plugin';
-import ReplacementPlugin from './build-in-plugins/replacement-plugin';
+import { registerPlugins, pluginHook, hooks } from './plugin';
+
+import * as BuildInPlugin from './build-in-plugins';
+
 import type { CopyFolderOptions, InnnerCopyFolderOptions } from './types';
 import copyFolder from './copy-folder';
 import { isArray, isObject, isString } from './utils/check-type';
 import CustomError from './custom-error';
+
+const { ReplacementPlugin, SuccessLogPlugin } = BuildInPlugin;
 
 export * from './types';
 
@@ -18,7 +22,7 @@ export type CopyFolderHook = typeof pluginHook;
  * @description copy folder content to other folder
  */
 
-const logger = getLogger('cpdirplus');
+export const logger = getLogger('cpdirplus');
 
 export function cpdirplus(
   from: string,
@@ -72,6 +76,7 @@ export default function cpdirplus(
 }
 
 const cpdirplusImpl = (options: CopyFolderOptions) => {
+  let resultOptions = {} as InnnerCopyFolderOptions;
   return new Promise((resolve) => {
     if (typeof options !== 'object') {
       throw new CustomError('options must be an object');
@@ -86,10 +91,10 @@ const cpdirplusImpl = (options: CopyFolderOptions) => {
     }
 
     let { from, plugins = [], exclude = [], include = ['**/*'] } = options;
-    let resultOptions = {
+    resultOptions = {
       ...options,
       RawOptions: options,
-    } as InnnerCopyFolderOptions;
+    };
 
     if (statSync(from).isFile()) {
       const fromPathParse = path.parse(from);
@@ -108,6 +113,8 @@ const cpdirplusImpl = (options: CopyFolderOptions) => {
       plugins.unshift(new ReplacementPlugin(options.replacements));
     }
 
+    plugins.unshift(new SuccessLogPlugin());
+
     registerPlugins(plugins);
 
     const onFinish = () => {
@@ -118,10 +125,14 @@ const cpdirplusImpl = (options: CopyFolderOptions) => {
     };
 
     resultOptions = { ...resultOptions, onFinish };
+
+    resultOptions = hooks.optionHook.call(resultOptions);
+
     copyFolder(resultOptions, true);
   })
     .then((...args) => {
-      logger.success(` Copy folders successfully.`);
+      hooks.finishHook.call(resultOptions);
+      // logger.success(` Copy folders successfully.`);
       return Promise.resolve(...args);
     })
     .then((...args) => {

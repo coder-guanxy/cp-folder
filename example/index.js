@@ -13,6 +13,6 @@ cpdir({
   from: sourcePath,
   to: targetPath,
 }).then(() => {
-  const result = fs.readdirSync(targetPath);
-  console.log('result', result);
+  // const result = fs.readdirSync(targetPath);
+  // console.log('result', result);
 });

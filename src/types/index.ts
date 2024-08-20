@@ -1,10 +1,8 @@
-import { AsyncSeriesWaterfallHook } from '@rspack/lite-tapable';
 import { ReplacementOption } from '../build-in-plugins/replacement-plugin';
+import { HooksType } from 'src/plugin';
 
 export interface CopyFolderPlugin {
-  onBeforeCopy: (
-    hook: AsyncSeriesWaterfallHook<CopyFolderPluginOptions>,
-  ) => void;
+  apply?: (hook: HooksType) => unknown;
 }
 
 export type CopyFolderOptionRename = Record<string, string>;
@@ -23,7 +21,6 @@ export interface CopyFolderOptions {
 }
 
 export interface InnnerCopyFolderOptions extends CopyFolderOptions {
-  tempFile?: string;
   excludeMatches?: string[];
   includeMatches?: string[];
   onFinish?: () => void;
@@ -33,3 +30,19 @@ export interface InnnerCopyFolderOptions extends CopyFolderOptions {
 export interface CopyFolderPluginOptions extends InnnerCopyFolderOptions {
   filename: string;
 }
+
+export abstract class CPDirPlugin {
+  abstract apply(hook: HooksType): unknown;
+}
+
+export type FinishOption = InnnerCopyFolderOptions;
+export type AfterFinishHook = HooksType['finishHook'];
+
+export type OptionsOption = InnnerCopyFolderOptions;
+export type AfterOptionHook = HooksType['optionHook'];
+
+export type AfterCopyOption = CopyFolderPluginOptions;
+export type AfterCopyHook = HooksType['afterCopyHook'];
+
+export type BeforeCopyOption = CopyFolderPluginOptions;
+export type BeforeCopyHook = HooksType['beforeCopyHook'];

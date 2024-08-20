@@ -9,7 +9,7 @@ import {
 import path from 'node:path';
 import { handleRename } from './rename';
 import type { CopyFolderPluginOptions, InnnerCopyFolderOptions } from './types';
-import { pluginHook } from './plugin';
+import { hooks } from './plugin';
 
 export default function copyFolder(
   options: InnnerCopyFolderOptions,
@@ -67,7 +67,7 @@ export default function copyFolder(
       continue;
     }
 
-    pluginHook.callAsync(
+    hooks.beforeCopyHook.callAsync(
       { ...options, filename },
       (
         err: Error | null,
